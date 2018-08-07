@@ -6,7 +6,7 @@ import { connectTheme } from '../../../utils';
 class Radio extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = { checked: 0 };
+    this.state = { checked: this.props.checked || 0 };
     this.handleChecked = this.handleChecked.bind(this);
   }
 
