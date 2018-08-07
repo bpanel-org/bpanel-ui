@@ -1,14 +1,22 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-import { connectTheme } from '../../utils';
-import Radio from './Type/Radio';
+import { connectTheme } from '../../../utils';
 
-class Input extends PureComponent {
+class Radio extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = { checked: 0 };
+    this.handleChecked = this.handleChecked.bind(this);
+  }
+
+  handleChecked(i) {
+    this.setState({ checked: i });
+  }
+
   static get propTypes() {
     return {
-      children: PropTypes.node,
-      defaultValue: PropTypes.string,
+      children: PropTypes.arrayOf(PropTypes.string).isRequired,
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func,
       placeholder: PropTypes.string,
@@ -21,7 +29,7 @@ class Input extends PureComponent {
 
   static get defaultProps() {
     return {
-      onChange: () => {},
+      onChange: this.handleChange,
       type: 'text',
     };
   }
@@ -29,6 +37,7 @@ class Input extends PureComponent {
   render() {
     const {
       children,
+      className,
       name,
       onChange,
       placeholder,
@@ -39,25 +48,28 @@ class Input extends PureComponent {
       ...otherProps
     } = this.props;
 
-    switch (type) {
-      case 'radio':
-        return <Radio {...this.props}>{children}</Radio>;
-
-      default:
-        return (
+    return children.map((option, idx) => (
+      <div key={option} className={className}>
+        <label className={`form-label ${theme.input.capitalize}`}>
           <input
+            checked={idx === this.state.checked}
             className={theme.input[type]}
             name={name}
-            onChange={onChange}
+            onChange={e => {
+              this.handleChecked(idx);
+              onChange(e);
+            }}
             placeholder={placeholder}
             style={style}
             type={type}
-            value={value}
+            value={option}
             {...otherProps}
           />
-        );
-    }
+          {option}
+        </label>
+      </div>
+    ));
   }
 }
 
-export default connectTheme(Input);
+export default connectTheme(Radio);
