@@ -3,6 +3,24 @@ import PropTypes from 'prop-types';
 
 import { connectTheme } from '../../../utils';
 
+const isLimPrim = function(input) {
+  return { string: '', number: '' }.hasOwnProperty(typeof input);
+};
+
+const optTypeCheck = function(option) {
+  if (Array.isArray(option)) return isLimPrim(option[0]) ? 'array' : false;
+  else return isLimPrim(option) ? 'lim-prim' : false;
+};
+
+const radioPropCheck = function(options, idx) {
+  if (!optTypeCheck(options[idx])) {
+    throw new Error(
+      `Invalid type [ ${typeof options[idx]} ] of option
+      Label in Radio. Validation failed.`
+    );
+  }
+};
+
 class Radio extends PureComponent {
   constructor(props) {
     super(props);
@@ -16,7 +34,10 @@ class Radio extends PureComponent {
 
   static get propTypes() {
     return {
-      children: PropTypes.arrayOf(PropTypes.string).isRequired,
+      children: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.string),
+        PropTypes.arrayOf((children, key) => radioPropCheck(children, key)),
+      ]),
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func,
       placeholder: PropTypes.string,
@@ -29,7 +50,7 @@ class Radio extends PureComponent {
 
   static get defaultProps() {
     return {
-      onChange: this.handleChange,
+      onChange: function() {},
       type: 'text',
     };
   }
@@ -48,27 +69,33 @@ class Radio extends PureComponent {
       ...otherProps
     } = this.props;
 
-    return children.map((option, idx) => (
-      <div key={option} className={className}>
-        <label className={`form-label ${theme.input.capitalize}`}>
-          <input
-            checked={idx === this.state.checked}
-            className={theme.input[type]}
-            name={name}
-            onChange={e => {
-              this.handleChecked(idx);
-              onChange(e);
-            }}
-            placeholder={placeholder}
-            style={style}
-            type={type}
-            value={option}
-            {...otherProps}
-          />
-          {option}
-        </label>
-      </div>
-    ));
+    return children.map((option, idx) => {
+      const radioType = optTypeCheck(option);
+      const optLabel = radioType === 'lim-prim' ? option : option[0];
+      const optValue = radioType === 'lim-prim' ? option : option[1];
+
+      return (
+        <div key={`${optLabel}-${idx}`} className={className}>
+          <label className={`form-label ${theme.input.capitalize}`}>
+            <input
+              checked={idx === this.state.checked}
+              className={theme.input[type]}
+              name={`${name}`}
+              onChange={e => {
+                this.handleChecked(idx);
+                onChange(e);
+              }}
+              placeholder={placeholder}
+              style={style}
+              type={type}
+              value={optValue}
+              {...otherProps}
+            />
+            {optLabel}
+          </label>
+        </div>
+      );
+    });
   }
 }
 
