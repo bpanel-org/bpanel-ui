@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
 import { connectTheme } from '../../utils';
+import Radio from './Type/Radio';
 
 class Input extends PureComponent {
   static get propTypes() {
@@ -14,42 +15,48 @@ class Input extends PureComponent {
       style: PropTypes.object,
       theme: PropTypes.object,
       type: PropTypes.string,
-      value: PropTypes.string
+      value: PropTypes.string,
     };
   }
 
   static get defaultProps() {
     return {
       onChange: () => {},
-      type: 'text'
+      type: 'text',
     };
   }
 
   render() {
     const {
-      type,
       children,
       name,
       onChange,
       placeholder,
-      theme,
       style,
+      theme,
+      type,
       value,
       ...otherProps
     } = this.props;
 
-    return (
-      <input
-        className={theme.input[type]}
-        name={name}
-        onChange={onChange}
-        placeholder={placeholder}
-        style={style}
-        type={type}
-        value={value}
-        {...otherProps}
-      />
-    );
+    switch (type) {
+      case 'radio':
+        return <Radio {...this.props}>{children}</Radio>;
+
+      default:
+        return (
+          <input
+            className={theme.input[type]}
+            name={name}
+            onChange={onChange}
+            placeholder={placeholder}
+            style={style}
+            type={type}
+            value={value}
+            {...otherProps}
+          />
+        );
+    }
   }
 }
 
