@@ -9,6 +9,7 @@ class Spinner extends PureComponent {
       className: PropTypes.string,
       style: PropTypes.object,
       theme: PropTypes.object,
+      error: PropTypes.object,
       size: PropTypes.string,
     };
   }
@@ -20,17 +21,28 @@ class Spinner extends PureComponent {
       // fontawesome size suffixes https://fontawesome.com/how-to-use/on-the-web/styling/sizing-icons
       size = '2x',
       theme: { themeVariables: { themeColors } },
+      error,
       ...otherProps
     } = this.props;
 
     const style = { color: themeColors.primary, ..._style };
-    return (
-      <div
-        className={`${className} fa fa-spinner fa-spin fa-${size}`}
-        style={style}
-        {...otherProps}
-      />
-    );
+    let loader;
+    if (error) {
+      loader = (
+        <div className="error" style={style} {...otherProps}>
+          There was an error loading the content{error.message ? `: ${error.message}` : ''}
+        </div>
+      );
+    } else {
+      loader = (
+        <div
+          className={`${className} fa fa-spinner fa-spin fa-${size}`}
+          style={style}
+          {...otherProps}
+        />
+      );
+    }
+    return <div>{loader}</div>;
   }
 }
 
