@@ -9,6 +9,35 @@ and utilities available on the [documentation website](https://bpanel.org/docs/u
 all of the components by installing the [BUI plugin](https://github.com/bpanel-org/bui) into your own version of
 bPanel.
 
+## Usage
+If using outside of bPanel, you need to install it first.
+```bash
+$ npm install --save @bpanel/bpanel-ui
+```
+
+For bPanel plugins though, simply add it to peerDependencies in your package.json.
+
+```json
+...
+peerDependencies {
+  "@bpanel/bpanel-ui": "*"
+}
+...
+```
+
+And then import into your project
+
+```
+import { Text, Header } from '@bpanel/bpanel-ui';
+
+export default () => (
+  <div>
+    <Header type="h2">Some Header</Header>
+    <Text type="p">Some text</Text>
+  </div>
+);
+```
+
 ## Contributions
 We love contributions! If there is a component you think would be useful for other bPanel UI developers (or even
 in other projects), we welcome PRs to add support for new UI elements. The most important thing is to make sure
