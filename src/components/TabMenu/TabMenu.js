@@ -42,14 +42,14 @@ class TabMenu extends PureComponent {
     return null;
   }
 
-  set(key, value) {
-    this.setState({ [key]: value });
+  onTabClick(value) {
+    this.setState({ selectedIndex: value });
     this.props.onTabClick(value);
   }
 
   renderHeader(header, index) {
     return (
-      <div onClick={() => this.set('selectedIndex', index)}>
+      <div onClick={() => this.onTabClick(index)}>
         <Text>{header}</Text>
       </div>
     );
