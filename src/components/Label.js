@@ -41,7 +41,7 @@ class Label extends PureComponent {
       textClasses,
       stacked,
     } = this.props;
-    console.log('theme.lab');
+
     return (
       <div
         key={0}
