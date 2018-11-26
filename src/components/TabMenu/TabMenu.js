@@ -11,10 +11,10 @@ const defaultTabs = [
 ];
 
 class TabMenu extends PureComponent {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      selectedIndex: 0,
+      selectedIndex: props.selectedIndex || 0,
     };
   }
 
