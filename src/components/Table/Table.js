@@ -118,7 +118,7 @@ class Table extends PureComponent {
 
   selectRow({ index }) {
     const { expandedHeight } = this.props;
-    const { selectedIndex } = this.state;
+    const { selectedIndex, hoverIndex } = this.state;
     const unselect = expandedHeight ? undefined : index;
     const updateIndex = index === selectedIndex ? unselect : index;
     this.setState({ selectedIndex: updateIndex });
@@ -141,12 +141,19 @@ class Table extends PureComponent {
     } = this.props;
 
     const {
-      table: { container: containerCss, header: headerCss, body: bodyCss },
+      table: {
+        container: containerCss,
+        header: headerCss,
+        body: bodyCss,
+        hoverExpandableRow,
+        hoverRow,
+        selectedRow,
+      },
       tableRowStyle,
       expandedRow: expandedRowStyles,
     } = theme;
 
-    const { selectedIndex } = this.state;
+    const { selectedIndex, hoverIndex } = this.state;
     const _colProps = this.getColProps();
     const tableHeight = this.getTableHeight(
       tableData,
@@ -159,6 +166,10 @@ class Table extends PureComponent {
       expandedHeight,
       expandedData,
       rowHeight,
+      hoverExpandableRow,
+      hoverRow,
+      selectedRow,
+      hoverIndex,
       expandedRowStyles,
       tableData,
       theme,
@@ -187,22 +198,6 @@ class Table extends PureComponent {
     const rowOnMouseOut = e => {
       this.setState({ hoverIndex: null });
     };
-    const tableRowStyleCombiner = e => {
-      let style = tableRowStyle(e);
-
-      if (selectable) {
-        if (e.index === this.state.hoverIndex)
-          style = { ...style, ...theme.themeConfig.table.hoverRow };
-
-        if (e.index === selectedIndex)
-          style = { ...style, ...theme.themeConfig.table.selectedRow };
-      }
-
-      if (expandedHeight && e.index === this.state.hoverIndex)
-        style = { ...style, ...theme.themeConfig.table.hoverExpandableRow };
-
-      return style;
-    };
 
     return (
       <div className={containerCss} style={containerStyle}>
@@ -214,9 +209,7 @@ class Table extends PureComponent {
               containerStyle={innerContainerStyle || { overflow: 'visible' }}
               headerClassName={headerCss}
               headerHeight={headerHeight}
-              headerRowRenderer={props => (
-                <HeaderRow {...props} theme={theme} />
-              )}
+              headerRowRenderer={props => <HeaderRow {...props} />}
               headerStyle={headerStyle}
               onRowClick={rowOnClick}
               onRowMouseOver={rowOnMouseOver}
@@ -225,7 +218,7 @@ class Table extends PureComponent {
               rowGetter={({ index }) => tableData[index]}
               rowHeight={rowHeight}
               rowRenderer={options => rowRenderer(options, rowRendererOptions)}
-              rowStyle={rowStyle || tableRowStyleCombiner}
+              rowStyle={rowStyle || tableRowStyle}
               width={width}
               {...tableProps}
             >
