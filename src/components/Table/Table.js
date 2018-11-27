@@ -55,6 +55,13 @@ class Table extends PureComponent {
     };
   }
 
+  /*
+   * getDerivedStateFromProps is invoked right before calling the render method
+   * we use it here to force-change the selected index of this table,
+   * from a prop setSelectedIndex that can be set by some other object
+   * a value of -1 means no change
+   */
+
   static getDerivedStateFromProps(props, state) {
     if (props.setSelectedIndex >= 0) {
       return {
