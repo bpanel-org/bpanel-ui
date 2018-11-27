@@ -20,19 +20,25 @@ export default function defaultRowRenderer(
     style,
   },
   {
-    openIndex,
+    selectedIndex,
     ExpandedComponent,
     expandedHeight,
     rowHeight,
+    hoverExpandableRow,
+    hoverRow,
+    selectedRow,
+    hoverIndex,
     expandedRowStyles,
     expandedData,
     tableData,
     theme,
+    selectable,
   }
 ) {
   const a11yProps = {};
   let expandedComponent = null;
-  let glyph; // up or down arrow glyph, indicates expanding row
+  let expandVisualAid = null;
+  let expandGlyph; // up or down arrow glyph, indicates expanding row
 
   if (
     onRowClick ||
@@ -62,33 +68,47 @@ export default function defaultRowRenderer(
       a11yProps.onContextMenu = event =>
         onRowRightClick({ event, index, rowData });
   }
-  if (index === openIndex) {
-    glyph = 'fa-chevron-up';
-    const data = expandedData ? expandedData : tableData;
-    expandedComponent = (
-      <div
-        style={{
-          ...style,
-          top: style.top + rowHeight,
-          height: expandedHeight,
-        }}
-      >
-        <ExpandedComponent expandedData={data[openIndex]} />
-      </div>
-    );
-  } else if (index > openIndex) {
-    style.top = style.top + expandedHeight;
+
+  // selectable styles
+  let rowClassNames = className;
+  if (selectable) {
+    if (index === hoverIndex && hoverRow)
+      rowClassNames = rowClassNames.concat(' ', hoverRow);
+    if (index === selectedIndex && selectedRow)
+      rowClassNames = rowClassNames.concat(' ', selectedRow);
   }
 
-  // glyph hasn't been set, this isn't a selected row
-  if (glyph === undefined) glyph = 'fa-chevron-down';
+  // style the header row
+  if (index === -1) rowClassNames = theme.table.headerRow;
 
-  // assume column can expand if expandedData is truthy
-  let expandVisualAid;
-  if (!!expandedData) {
+  if (expandedHeight && index === hoverIndex)
+    rowClassNames = rowClassNames.concat(' ', hoverExpandableRow);
+
+  // Expandable rows get up/down icon and hidden expanded data content
+  if (expandedData) {
+    if (index === selectedIndex) {
+      expandGlyph = 'fa-chevron-up';
+      expandedComponent = (
+        <div
+          style={{
+            ...style,
+            top: style.top + rowHeight,
+            height: expandedHeight,
+          }}
+        >
+          <ExpandedComponent expandedData={expandedData[selectedIndex]} />
+        </div>
+      );
+    } else if (index > selectedIndex) {
+      style.top = style.top + expandedHeight;
+    }
+
+    // glyph hasn't been set, this isn't a selected row
+    if (expandGlyph === undefined) expandGlyph = 'fa-chevron-down';
+
     expandVisualAid = (
       <div className={theme.expandedRow.expandVisualAid}>
-        <i className={`fa ${glyph}`} />
+        <i className={`fa ${expandGlyph}`} />
       </div>
     );
   }
@@ -97,7 +117,7 @@ export default function defaultRowRenderer(
     <div key={key} style={{}}>
       {' '}
       {/* Empty style object added to remove react-virtualized warning */}
-      <div {...a11yProps} className={className} role="row" style={style}>
+      <div {...a11yProps} className={rowClassNames} role="row" style={style}>
         {columns}
         {expandVisualAid}
       </div>
