@@ -18,12 +18,14 @@ class Table extends PureComponent {
     super();
     this.state = {
       /**
-       * openIndex tracks the row in the table that is open
+       * selectedIndex tracks the row in the table that is selected
        * Its value is the index of the row in the table
+       * hoverIndex is similar, for mouseOver state
        */
-      openIndex: undefined,
+      selectedIndex: undefined,
+      hoverIndex: null,
     };
-    this.onRowClick = this.onRowClick.bind(this);
+    this.selectRow = this.selectRow.bind(this);
   }
 
   static get propTypes() {
@@ -51,6 +53,24 @@ class Table extends PureComponent {
         headerStyle: {},
       },
     };
+  }
+
+  /*
+   * getDerivedStateFromProps is invoked right before calling the render method
+   * we use it here to force-change the selected index of this table,
+   * from a prop setSelectedIndex that can be set by some other object
+   * a value of -1 means no change
+   */
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.setSelectedIndex >= 0) {
+      return {
+        ...state,
+        selectedIndex: props.setSelectedIndex,
+      };
+    }
+
+    return null;
   }
 
   /**
@@ -84,23 +104,24 @@ class Table extends PureComponent {
    * if a row is expanded.
    */
 
-  getTableHeight(tableData, openIndex, openHeight) {
+  getTableHeight(tableData, selectedIndex, openHeight) {
+    openHeight = openHeight ? openHeight : 0; // selectable but not expandable
     return (
       (tableData.length + 1) * 30 +
-      (openIndex || openIndex === 0 ? openHeight : 0)
+      (selectedIndex || selectedIndex === 0 ? openHeight : 0)
     );
   }
 
   /**
-   * onRowClick handles an onClick event to expand a table row.
+   * selectRow updates selectedIndex when a row is clicked.
    */
 
-  onRowClick({ index }) {
+  selectRow({ index }) {
     const { expandedHeight } = this.props;
-    const { openIndex } = this.state;
-    const selectedIndex =
-      expandedHeight && index === openIndex ? undefined : index;
-    this.setState({ openIndex: selectedIndex });
+    const { selectedIndex, hoverIndex } = this.state;
+    const unselect = expandedHeight ? undefined : index;
+    const updateIndex = index === selectedIndex ? unselect : index;
+    this.setState({ selectedIndex: updateIndex });
   }
 
   render() {
@@ -115,34 +136,68 @@ class Table extends PureComponent {
       rowStyle,
       style: { containerStyle, innerContainerStyle, headerStyle, bodyStyle },
       theme,
+      selectable,
       ...tableProps
     } = this.props;
 
     const {
-      table: { container: containerCss, header: headerCss, body: bodyCss },
+      table: {
+        container: containerCss,
+        header: headerCss,
+        body: bodyCss,
+        hoverExpandableRow,
+        hoverRow,
+        selectedRow,
+      },
       tableRowStyle,
       expandedRow: expandedRowStyles,
     } = theme;
 
-    const { openIndex } = this.state;
+    const { selectedIndex, hoverIndex } = this.state;
     const _colProps = this.getColProps();
     const tableHeight = this.getTableHeight(
       tableData,
-      openIndex,
+      selectedIndex,
       expandedHeight
     );
     const rowRendererOptions = {
-      openIndex,
+      selectedIndex,
       ExpandedComponent,
       expandedHeight,
       expandedData,
       rowHeight,
+      hoverExpandableRow,
+      hoverRow,
+      selectedRow,
+      hoverIndex,
       expandedRowStyles,
       tableData,
       theme,
+      selectable,
     };
 
-    const rowOnClick = expandedHeight ? this.onRowClick : onRowClick;
+    // custom click actions for certain table formats
+    const rowOnClick = e => {
+      if (expandedHeight || selectable) {
+        this.selectRow(e);
+      }
+
+      // custom function has been passed as a property
+      if (onRowClick) {
+        onRowClick(e);
+      }
+
+      // default: do nothing
+      return;
+    };
+
+    // mouse hover actions
+    const rowOnMouseOver = e => {
+      this.setState({ hoverIndex: e.index });
+    };
+    const rowOnMouseOut = e => {
+      this.setState({ hoverIndex: null });
+    };
 
     return (
       <div className={containerCss} style={containerStyle}>
@@ -157,11 +212,13 @@ class Table extends PureComponent {
               headerRowRenderer={props => <HeaderRow {...props} />}
               headerStyle={headerStyle}
               onRowClick={rowOnClick}
+              onRowMouseOver={rowOnMouseOver}
+              onRowMouseOut={rowOnMouseOut}
               rowCount={tableData.length}
               rowGetter={({ index }) => tableData[index]}
               rowHeight={rowHeight}
               rowRenderer={options => rowRenderer(options, rowRendererOptions)}
-              rowStyle={tableRowStyle || rowStyle}
+              rowStyle={rowStyle || tableRowStyle}
               width={width}
               {...tableProps}
             >
