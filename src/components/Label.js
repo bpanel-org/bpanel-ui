@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Text from './Text';
+import { connectTheme, makeRem } from '../utils';
 
 /*
  * renders text on top of children components
@@ -16,6 +17,7 @@ class Label extends PureComponent {
       textClasses: PropTypes.string,
       stacked: PropTypes.bool,
       className: PropTypes.string,
+      description: PropTypes.string,
       theme: PropTypes.object,
       style: PropTypes.object,
     };
@@ -27,6 +29,7 @@ class Label extends PureComponent {
       textClasses: '',
       stacked: true,
       theme: {},
+      description: '',
       style: {},
     };
   }
@@ -36,10 +39,11 @@ class Label extends PureComponent {
       text,
       children,
       className,
-      theme,
+      theme: { label, themeVariables },
       style,
       textClasses,
       stacked,
+      description,
     } = this.props;
 
     return (
@@ -50,13 +54,26 @@ class Label extends PureComponent {
           : 'row align-items-center'} ${className}`}
         style={Object.assign({ width: '100%' }, style)}
       >
-        <Text className={`col-auto ${theme.label || ''} ${textClasses}`}>
-          {text}
-        </Text>
-        <div className="col">{children}</div>
+        <Text className={`col-auto ${label.text} ${textClasses}`}>{text}</Text>
+        <div className={`col ${label.content}`}>
+          {children}
+          {description.length ? (
+            <Text
+              type="p"
+              className={label.description}
+              style={{
+                fontSize: makeRem(themeVariables.rawRem.fontSizeSmall),
+              }}
+            >
+              {description}
+            </Text>
+          ) : (
+            ''
+          )}
+        </div>
       </div>
     );
   }
 }
 
-export default Label;
+export default connectTheme(Label);
