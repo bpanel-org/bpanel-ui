@@ -14,7 +14,7 @@ class TabMenu extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      selectedIndex: props.selectedIndex || 0,
+      selectedIndex: 0,
     };
   }
 
