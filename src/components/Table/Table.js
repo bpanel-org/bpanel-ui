@@ -98,7 +98,6 @@ class Table extends PureComponent {
         // allow for custom react components to be returned
         return cellData;
       },
-      cellRenderer: ({ cellData }) => cellData,
       headerRenderer: ({ label }) => <Text>{label && label.toString()}</Text>,
     }));
   }
