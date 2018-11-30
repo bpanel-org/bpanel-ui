@@ -14,7 +14,7 @@ class Dropdown extends PureComponent {
   // onChange({ label, value }, { action, option }) => void
   static get propTypes() {
     return {
-      defaultValue: PropTypes.string,
+      value: PropTypes.string,
       theme: PropTypes.object,
       style: PropTypes.object,
       placeholder: PropTypes.string,
@@ -80,7 +80,7 @@ class Dropdown extends PureComponent {
       theme = {},
       options = [],
       onChange,
-      defaultValue,
+      value,
       placeholder,
     } = this.props;
 
@@ -88,7 +88,7 @@ class Dropdown extends PureComponent {
     return (
       <div className={theme.dropdown.container}>
         <Select
-          defaultValue={defaultValue}
+          value={this.formatOptions([value])}
           options={this.formatOptions(options)}
           placeholder={placeholder}
           styles={this.customStyles(theme)}
