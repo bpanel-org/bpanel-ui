@@ -79,7 +79,7 @@ class Table extends PureComponent {
 
   getColProps() {
     const { colProps, tableData, colHeaders } = this.props;
-    if (colProps) return colprops;
+    if (colProps) return colProps;
 
     const headers = Array.isArray(colHeaders)
       ? colHeaders
@@ -92,9 +92,13 @@ class Table extends PureComponent {
       dataKey: header,
       width: 400,
       flexGrow: 1,
-      cellRenderer: ({ cellData }) => (
-        <Text>{cellData && cellData.toString()}</Text>
-      ),
+      cellRenderer: ({ cellData = '' }) => {
+        // wrap strings in text components
+        if (typeof cellData === 'string') return <Text>{cellData}</Text>;
+        // allow for custom react components to be returned
+        return cellData;
+      },
+      cellRenderer: ({ cellData }) => cellData,
       headerRenderer: ({ label }) => <Text>{label && label.toString()}</Text>,
     }));
   }
