@@ -113,6 +113,7 @@ export default function defaultRowRenderer(
     );
   }
 
+  // columns are the table data
   return (
     <div key={key} style={{}}>
       {' '}
