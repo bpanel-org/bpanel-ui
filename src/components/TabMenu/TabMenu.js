@@ -92,16 +92,21 @@ class TabMenu extends PureComponent {
       ...otherProps
     } = this.props;
     const { selectedIndex } = this.state;
+    const containerClassNames = `${orientation === 'vertical'
+      ? 'd-flex flex-row mt-2'
+      : ''} ${className}`;
+    const headerContainerClassNames = `${headerContainer} ${navColCount
+      ? 'col-'.concat(navColCount)
+      : ''} nav ${orientation === 'vertical' ? 'flex-column' : ''}`;
+    const headerClassNames = `${headerText} ${stateStyles.className} nav-link ${orientation ===
+    'vertical'
+      ? `${verticalHeaderLink} nav flex-column`
+      : ''}`;
+
     return (
-      <div
-        className={`${orientation === 'vertical'
-          ? 'd-flex flex-row mt-2'
-          : ''} ${className}`}
-      >
+      <div className={containerClassNames}>
         <div
-          className={`${headerContainer} ${navColCount
-            ? 'col-'.concat(navColCount)
-            : ''} nav ${orientation === 'vertical' ? 'flex-column' : ''}`}
+          className={headerContainerClassNames}
           style={customHeaderContainer}
         >
           {tabs.map(({ header }, index) => {
@@ -117,10 +122,7 @@ class TabMenu extends PureComponent {
                 };
             return (
               <div
-                className={`${headerText} ${stateStyles.className} nav-link ${orientation ===
-                'vertical'
-                  ? `${verticalHeaderLink} nav flex-column`
-                  : ''}`}
+                className={headerClassNames}
                 key={`${header}-header-${index}`}
                 style={stateStyles.customStyles}
               >
