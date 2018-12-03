@@ -98,6 +98,10 @@ class TabMenu extends PureComponent {
     const headerContainerClassNames = `${headerContainer} ${navColCount
       ? 'col-'.concat(navColCount)
       : ''} nav ${orientation === 'vertical' ? 'flex-column' : ''}`;
+    const headerClassNames = `${headerText} ${stateStyles.className} nav-link ${orientation ===
+    'vertical'
+      ? `${verticalHeaderLink} nav flex-column`
+      : ''}`;
 
     return (
       <div className={containerClassNames}>
