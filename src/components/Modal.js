@@ -7,7 +7,7 @@ import { Header } from '.';
 class Modal extends PureComponent {
   static get propTypes() {
     return {
-      sytle: PropTypes.object,
+      styles: PropTypes.object,
       type: PropTypes.oneOf(['error']),
       theme: PropTypes.object,
       closeModal: PropTypes.func,
@@ -30,6 +30,7 @@ class Modal extends PureComponent {
         dialog: {},
         content: {},
         header: {},
+        body: {},
         footer: {},
       },
       header: '',
@@ -56,7 +57,7 @@ class Modal extends PureComponent {
     const dialogClassNames = `${modal.dialoge}`;
 
     const modalHeader = (
-      <div className={`modal-header ${modal.header}`}>
+      <div className={`modal-header ${modal.header}`} styles={styles.header}>
         {header}
         {closeModal ? (
           <button
@@ -73,16 +74,23 @@ class Modal extends PureComponent {
       </div>
     );
     const modalFooter = footer ? (
-      <div className={`modal-footer ${modal.footer}`}>{footer}</div>
+      <div className={`modal-footer ${modal.footer}`} styles={styles.footer}>
+        {footer}
+      </div>
     ) : (
       ''
     );
     return (
       <div className={modalClassNames} style={modalStyles}>
-        <div className={dialogClassNames}>
-          <div className={`${modal.content} modal-content`}>
+        <div className={dialogClassNames} styles={styles.dialog}>
+          <div
+            className={`${modal.content} modal-content`}
+            styles={styles.content}
+          >
             {modalHeader}
-            <div className="modal-body">{children}</div>
+            <div className="modal-body" styles={styles.body}>
+              {children}
+            </div>
             {modalFooter}
           </div>
         </div>
