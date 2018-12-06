@@ -57,7 +57,7 @@ class Modal extends PureComponent {
     const dialogClassNames = `${modal.dialoge}`;
 
     const modalHeader = (
-      <div className={`modal-header ${modal.header}`} styles={styles.header}>
+      <div className={`modal-header ${modal.header}`} style={styles.header}>
         {header}
         {closeModal ? (
           <button
@@ -74,7 +74,7 @@ class Modal extends PureComponent {
       </div>
     );
     const modalFooter = footer ? (
-      <div className={`modal-footer ${modal.footer}`} styles={styles.footer}>
+      <div className={`modal-footer ${modal.footer}`} style={styles.footer}>
         {footer}
       </div>
     ) : (
@@ -82,13 +82,13 @@ class Modal extends PureComponent {
     );
     return (
       <div className={modalClassNames} style={modalStyles}>
-        <div className={dialogClassNames} styles={styles.dialog}>
+        <div className={dialogClassNames} style={styles.dialog}>
           <div
             className={`${modal.content} modal-content`}
-            styles={styles.content}
+            style={styles.content}
           >
             {modalHeader}
-            <div className="modal-body" styles={styles.body}>
+            <div className="modal-body" style={styles.body}>
               {children}
             </div>
             {modalFooter}
