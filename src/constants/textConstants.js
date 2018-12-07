@@ -10,9 +10,9 @@ const TEXT_TAGS = keyMirror({
 });
 
 const TEXT_ELEMENTS = {
-  [TEXT_TAGS.p]: props => <p {...props} />,
-  [TEXT_TAGS.span]: props => <span {...props} />,
-  [TEXT_TAGS.strong]: props => <strong {...props} />,
+  [TEXT_TAGS.p]: ({ theme, ...props }) => <p {...props} />,
+  [TEXT_TAGS.span]: ({ theme, ...props }) => <span {...props} />,
+  [TEXT_TAGS.strong]: ({ theme, ...props }) => <strong {...props} />,
 };
 
 export default {
