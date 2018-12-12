@@ -54,7 +54,7 @@ class Modal extends PureComponent {
     const modalClassNames = `modal  ${modal.container} fade ${show
       ? 'show'
       : 'hide'}`;
-    const dialogClassNames = `${modal.dialoge}`;
+    const dialogClassNames = `${modal.dialog || modal.dialoge}`;
 
     const modalHeader = (
       <div className={`modal-header ${modal.header}`} style={styles.header}>
