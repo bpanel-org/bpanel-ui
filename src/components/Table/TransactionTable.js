@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import propTypes from 'prop-types';
 import moment from 'moment';
 import assert from 'bsert';
+import { without } from 'lodash';
 import { Table } from '../index';
 import { connectTheme } from '../../utils';
 
@@ -165,10 +166,15 @@ class TransactionTable extends PureComponent {
    * TODO: cache result and only
    * compute if things changed
    *
+   * Remove certain fields if they are not passed in as a prop
+   * TODO: allow for dynamic label removal
+   *
    * @returns {String[]}
    */
   getHeaders() {
-    return Object.values(this.props.headerMap);
+    let headers = Object.values(this.props.headerMap);
+    if (!this.props.wallet) headers = without(headers, 'Wallet');
+    return headers;
   }
 
   /*
@@ -176,9 +182,9 @@ class TransactionTable extends PureComponent {
    * @returns {JSX}
    */
   render() {
-    const { transactions, UXTXOptions, wallet, protocol } = this.props;
+    const { transactions, UXTXOptions, wallet, chain } = this.props;
     if (wallet) UXTXOptions.wallet = wallet;
-    if (protocol) UXTXOptions.protocol = protocol;
+    if (chain) UXTXOptions.chain = chain;
 
     const [tableData, expandedData] = this.formatTableData(
       transactions,
@@ -201,7 +207,7 @@ class TransactionTable extends PureComponent {
           expandedHeight={expandedHeight}
           ExpandedComponent={props => <ExpandedComponent {...props} />}
           expandedData={expandedData}
-          onRowClick={e => console.log(e)}
+          onRowClick={e => {}}
         />
       </div>
     );
